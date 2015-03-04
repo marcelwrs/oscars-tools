@@ -1,0 +1,29 @@
+# Sample topology file including 3 nodes
+# (RJO, SPO, FNS) two links and a client
+# port on each node.
+
+# Network prefix
+-- domain
+cipo.rnp.br
+
+# Network prefix
+-- prefix
+200.143.251
+
+# Routers <name address>
+-- nodes
+RJO	.1
+SPO	.2
+FNS	.3
+
+# Links <A B addrA addrB ifaceA ifaceB capacity>
+-- links
+RJO	SPO	.101	.102	xe-0/0/1	xe-0/1/0	1000000000	1-4094
+SPO	FNS	.105	.106	xe-0/2/2	xe-0/2/0	1000000000	1-4094
+
+# Client ports (node port capacity)
+-- clients
+RJO	ge-2/3/4	1000000000	200-299
+SPO	ge-2/3/4	1000000000	200-299
+FNS	ge-2/3/4	1000000000	200-299
+
