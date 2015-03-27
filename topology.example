@@ -4,7 +4,7 @@
 
 # Network prefix
 -- domain
-cipo.rnp.br
+testdomain.rnp.br
 
 # Network prefix
 -- prefix
@@ -12,9 +12,9 @@ cipo.rnp.br
 
 # Routers <name address>
 -- nodes
-RJO	.1
-SPO	.2
-FNS	.3
+RJO	.1	0	0
+SPO	.2	0	3
+FNS	.3	3	0
 
 # Links <A B addrA addrB ifaceA ifaceB capacity>
 -- links
