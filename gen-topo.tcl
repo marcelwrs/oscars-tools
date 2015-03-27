@@ -7,7 +7,7 @@
 
 proc main {} {
 
-    global argv prefix domain nodes links clients
+    global argv prefix domain nodes links clients dir
 
     # get file name
     set desc_file [lindex $argv 0]
@@ -56,15 +56,79 @@ proc main {} {
 	    }
     }
     close $desc_fd
-    #puts "$prefix $nodes $links $clients"
+
+    set dir "$domain-[clock format [clock seconds] -format "%Y-%m-%d"]"
+    exec mkdir $dir
+
+    gen_pss_files
+    gen_oscars_topo
+    gen_net_diagram
+}
+
+# generate OSCARS PSS aux files
+proc gen_pss_files {} {
+
+    global prefix domain nodes links clients dir
+
+    set out_dev_addr [open "$dir/config-device-addresses.yaml" w]
+    set out_eo_dev [open "$dir/config-eompls-device-addresses.yaml" w]
+    set out_dev_conn [open "$dir/config-device-connectors.yaml" w]
+    set out_dev_model [open "$dir/config-device-models.yaml" w]
+    set out_eo_ifce [open "$dir/config-eompls-ifce-addresses.yaml" w]
+
+    # headers
+    puts $out_dev_addr "---"
+    puts $out_eo_dev "---"
+    puts $out_dev_conn "---"
+    puts $out_dev_model "---"
+    puts $out_eo_ifce "---"
+
+    # devices
+    foreach elem $nodes {
+	    set node [lindex $elem 0]
+	    set address [join [list $prefix [lindex $elem 1]] ""]
+
+	    # address
+	    puts $out_dev_addr "\"$node\":\t\"$address\""
+	    puts $out_eo_dev   "\"$node\":\t\"$address\""
+
+	    # other
+	    puts $out_dev_conn  "\"$node\":\t\"junoscript\""
+	    puts $out_dev_model "\"$node\":\t\"juniper-mx\""
+
+	    # adding ports/links
+	    foreach line $links {
+		    set index [lsearch -ascii $line $node]
+		    if {$index != -1} {
+			    set nodea [lindex $line 0]
+			    set nodeb [lindex $line 1]
+			    set addra [lindex $line 2]
+			    set addrb [lindex $line 3]
+			    set ifacea [lindex $line 4]
+			    set ifaceb [lindex $line 5]
+
+			    if {$node == $nodea} {
+				    puts $out_eo_ifce   "\"urn:ogf:network:domain=${domain}:node=${nodea}:port=${ifacea}:link=10.0.0${addra}\":\t\"$prefix.$addra\""
+			    } else {
+				    puts $out_eo_ifce   "\"urn:ogf:network:domain=${domain}:node=${nodeb}:port=${ifaceb}:link=10.0.0${addrb}\":\t\"$prefix.$addrb\""
+			    }
+		    }
+	    }
+    }
+
+    close $out_dev_addr
+    close $out_eo_dev
+    close $out_dev_conn
+    close $out_dev_model
+    close $out_eo_ifce
 }
 
 # generate OSCARS topology file
 proc gen_oscars_topo {} {
 
-    global prefix domain nodes links clients
+    global prefix domain nodes links clients dir
 
-    set out_fd [open "topology.xml" w]
+    set out_fd [open "$dir/topology-$domain.xml" w]
 
     # header
     puts $out_fd "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -208,35 +272,33 @@ proc gen_oscars_topo {} {
     close $out_fd
 }
 
-proc gen-net-diagram {} {
+proc gen_net_diagram {} {
 
-    global prefix domain nodes links clients
+    global prefix domain nodes links clients dir
 
-    set out_fd [open "diagram.dot" w]
+    set out_fd [open "$dir/diagram.dot" w]
 
     # Header section
     puts $out_fd "graph cipo_network \{"
+    puts $out_fd "splines=true;"
+    puts $out_fd "overlap=scale;"
     
     # Plot nodes
     foreach elem $nodes {
-	puts $out_fd "[lindex $elem 0] \[ shape=oval, label=\"[lindex $elem 0]\n($prefix[lindex $elem 1])\" \];"
+	puts $out_fd "[lindex $elem 0] \[ shape=oval, pos=\"[lindex $elem 2],[lindex $elem 3]\!\", label=\"[lindex $elem 0] ([lindex $elem 1])\" \];"
     }
 
     # Plot links
     foreach elem $links {
-	puts $out_fd "[lindex $elem 0] -- [lindex $elem 1] \[ label=\"[lindex $elem 7]\" \];"
+	#puts $out_fd "[lindex $elem 0] -- [lindex $elem 1] \[ label=\"[lindex $elem 7]\" \];"
+	puts $out_fd "[lindex $elem 0] -- [lindex $elem 1] \[ taillabel=\"[lindex $elem 2]\", headlabel=\"[lindex $elem 3]\" \];"
     }
 
     puts $out_fd "\}"
 
     close $out_fd
 
-    exec dot -Tps diagram.dot -o diagram.ps
+    exec neato -Tps $dir/diagram.dot -o $dir/diagram.ps
 }
 
 main
-
-gen_oscars_topo
-
-gen-net-diagram
-
