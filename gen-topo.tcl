@@ -58,7 +58,7 @@ proc main {} {
     close $desc_fd
 
     set dir "$domain-[clock format [clock seconds] -format "%Y-%m-%d"]"
-    exec mkdir $dir
+    exec mkdir -p $dir
 
     gen_pss_files
     gen_oscars_topo
@@ -276,29 +276,39 @@ proc gen_net_diagram {} {
 
     global prefix domain nodes links clients dir
 
-    set out_fd [open "$dir/diagram.dot" w]
+    set out_addr [open "$dir/address-diag.dot" w]
+    set out_ifce [open "$dir/iface-diag.dot" w]
 
     # Header section
-    puts $out_fd "graph cipo_network \{"
-    puts $out_fd "splines=true;"
-    puts $out_fd "overlap=scale;"
+    puts $out_addr "graph cipo_network \{"
+    puts $out_addr "splines=true;"
+    puts $out_addr "overlap=scale;"
+    puts $out_addr "fixedsize=true;"
+    puts $out_ifce "graph cipo_network \{"
+    puts $out_ifce "splines=true;"
+    puts $out_ifce "overlap=scale;"
+    puts $out_ifce "fixedsize=true;"
     
     # Plot nodes
     foreach elem $nodes {
-	puts $out_fd "[lindex $elem 0] \[ shape=oval, pos=\"[lindex $elem 2],[lindex $elem 3]\!\", label=\"[lindex $elem 0] ([lindex $elem 1])\" \];"
+	puts $out_addr "[lindex $elem 0] \[ shape=ellipse, width=.9, height=.6, pos=\"[lindex $elem 2],[lindex $elem 3]\!\", label=\"[lindex $elem 0]\n([lindex $elem 1])\" \];"
+	puts $out_ifce "[lindex $elem 0] \[ shape=ellipse, width=.9, height=.6, pos=\"[lindex $elem 2],[lindex $elem 3]\!\", label=\"[lindex $elem 0]\n([lindex $elem 1])\" \];"
     }
 
     # Plot links
     foreach elem $links {
-	#puts $out_fd "[lindex $elem 0] -- [lindex $elem 1] \[ label=\"[lindex $elem 7]\" \];"
-	puts $out_fd "[lindex $elem 0] -- [lindex $elem 1] \[ taillabel=\"[lindex $elem 2]\", headlabel=\"[lindex $elem 3]\" \];"
+	puts $out_addr "[lindex $elem 0] -- [lindex $elem 1] \[ taillabel=\"[lindex $elem 2]\", headlabel=\"[lindex $elem 3]\" \];"
+	puts $out_ifce "[lindex $elem 0] -- [lindex $elem 1] \[ taillabel=\"[lindex $elem 4]\", headlabel=\"[lindex $elem 5]\" \];"
     }
 
-    puts $out_fd "\}"
+    puts $out_addr "\}"
+    puts $out_ifce "\}"
 
-    close $out_fd
+    close $out_addr
+    close $out_ifce
 
-    exec neato -Tps $dir/diagram.dot -o $dir/diagram.ps
+    exec neato -Tps $dir/address-diag.dot -o $dir/address-diag.ps
+    exec neato -Tps $dir/iface-diag.dot -o $dir/iface-diag.ps
 }
 
 main
