@@ -156,8 +156,8 @@ proc gen_oscars_topo {} {
 	    set index [lsearch -index 0 -ascii $clients $node]
 	    if {$index != -1} {
 		    set iface [lindex $clients $index 1]
-		    set capacity [lindex $clients $index 2]
-		    set mincap [expr $capacity/100]
+		    set capacity [expr [lindex $clients $index 2]*1000000]
+		    set mincap [min [expr $capacity/10] 100000000]
 		    set vlans [lindex $clients $index 3]
 
 		    puts $out_fd "      <!-- client port $node -->"
@@ -198,8 +198,8 @@ proc gen_oscars_topo {} {
 			    set addrb [lindex $line 3]
 			    set ifacea [lindex $line 4]
 			    set ifaceb [lindex $line 5]
-			    set capacity [lindex $line 6]
-			    set mincap [expr $capacity/100]
+			    set capacity [expr [lindex $line 6]*1000000]
+			    set mincap [min [expr $capacity/10] 100000000]
 			    set vlans [lindex $line 7]
 
 			    if {$node == $nodea} {
