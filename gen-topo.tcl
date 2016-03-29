@@ -4,6 +4,7 @@
 # gen-topo.sh <topology_desc_file.conf>
 #
 
+namespace import ::tcl::mathfunc::min
 
 proc main {} {
 
@@ -153,41 +154,43 @@ proc gen_oscars_topo {} {
 	    puts $out_fd "      <CtrlPlane:address>${address}</CtrlPlane:address>"
 	    puts $out_fd ""
 
-	    set index [lsearch -index 0 -ascii $clients $node]
-	    if {$index != -1} {
-		    set iface [lindex $clients $index 1]
-		    set capacity [expr [lindex $clients $index 2]*1000000]
-		    set mincap [min [expr $capacity/10] 100000000]
-		    set vlans [lindex $clients $index 3]
+	    set indexes [lsearch -all -index 0 -ascii $clients $node]
+	    if {$indexes != -1} {
+		    foreach index $indexes {
+		    	set iface [lindex $clients $index 1]
+		    	set capacity [expr [lindex $clients $index 2]*1000000]
+		    	set mincap [min [expr $capacity/10] 100000000]
+		    	set vlans [lindex $clients $index 3]
+		    	set link [lindex $clients $index 4]
 
-		    puts $out_fd "      <!-- client port $node -->"
-		    puts $out_fd "      <CtrlPlane:port id=\"urn:ogf:network:domain=${domain}:node=${node}:port=${iface}\">"
-		    puts $out_fd "        <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
-		    puts $out_fd "        <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
-		    puts $out_fd "        <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
-		    puts $out_fd "        <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
-		    puts $out_fd ""
-		    puts $out_fd "        <CtrlPlane:link id=\"urn:ogf:network:domain=${domain}:node=${node}:port=${iface}:link=*\">"
-		    puts $out_fd "          <CtrlPlane:remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</CtrlPlane:remoteLinkId>"
-		    puts $out_fd "          <CtrlPlane:trafficEngineeringMetric>100</CtrlPlane:trafficEngineeringMetric>"
-		    puts $out_fd "          <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
-		    puts $out_fd "          <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
-		    puts $out_fd "          <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
-		    puts $out_fd "          <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
-		    puts $out_fd "          <CtrlPlane:SwitchingCapabilityDescriptors>"
-		    puts $out_fd "            <CtrlPlane:switchingcapType>l2sc</CtrlPlane:switchingcapType>"
-		    puts $out_fd "            <CtrlPlane:encodingType>ethernet</CtrlPlane:encodingType>"
-		    puts $out_fd "            <CtrlPlane:switchingCapabilitySpecificInfo>"
-		    puts $out_fd "              <CtrlPlane:interfaceMTU>5000</CtrlPlane:interfaceMTU>"
-		    puts $out_fd "              <CtrlPlane:vlanRangeAvailability>${vlans}</CtrlPlane:vlanRangeAvailability>"
-		    puts $out_fd "              <CtrlPlane:vlanTranslation>1</CtrlPlane:vlanTranslation>"
-		    puts $out_fd "            </CtrlPlane:switchingCapabilitySpecificInfo>"
-		    puts $out_fd "          </CtrlPlane:SwitchingCapabilityDescriptors>"
-		    puts $out_fd "        </CtrlPlane:link>"
-		    puts $out_fd "      </CtrlPlane:port>"
-		    puts $out_fd ""
+			    puts $out_fd "      <!-- client port $node -->"
+			    puts $out_fd "      <CtrlPlane:port id=\"urn:ogf:network:domain=${domain}:node=${node}:port=${iface}\">"
+			    puts $out_fd "        <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
+			    puts $out_fd "        <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
+			    puts $out_fd "        <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
+			    puts $out_fd "        <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
+			    puts $out_fd ""
+			    puts $out_fd "        <CtrlPlane:link id=\"urn:ogf:network:domain=${domain}:node=${node}:port=${iface}:link=${link}\">"
+			    puts $out_fd "          <CtrlPlane:remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</CtrlPlane:remoteLinkId>"
+			    puts $out_fd "          <CtrlPlane:trafficEngineeringMetric>100</CtrlPlane:trafficEngineeringMetric>"
+			    puts $out_fd "          <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
+			    puts $out_fd "          <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
+			    puts $out_fd "          <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
+			    puts $out_fd "          <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
+			    puts $out_fd "          <CtrlPlane:SwitchingCapabilityDescriptors>"
+			    puts $out_fd "            <CtrlPlane:switchingcapType>l2sc</CtrlPlane:switchingcapType>"
+			    puts $out_fd "            <CtrlPlane:encodingType>ethernet</CtrlPlane:encodingType>"
+			    puts $out_fd "            <CtrlPlane:switchingCapabilitySpecificInfo>"
+			    puts $out_fd "              <CtrlPlane:interfaceMTU>5000</CtrlPlane:interfaceMTU>"
+			    puts $out_fd "              <CtrlPlane:vlanRangeAvailability>${vlans}</CtrlPlane:vlanRangeAvailability>"
+			    puts $out_fd "              <CtrlPlane:vlanTranslation>1</CtrlPlane:vlanTranslation>"
+			    puts $out_fd "            </CtrlPlane:switchingCapabilitySpecificInfo>"
+			    puts $out_fd "          </CtrlPlane:SwitchingCapabilityDescriptors>"
+			    puts $out_fd "        </CtrlPlane:link>"
+			    puts $out_fd "      </CtrlPlane:port>"
+			    puts $out_fd ""
+		    }
 	    }
-
 	    # adding ports/links
 	    foreach line $links {
 		    set index [lsearch -ascii $line $node]
