@@ -108,9 +108,9 @@ proc gen_pss_files {} {
 			    set ifaceb [lindex $line 5]
 
 			    if {$node == $nodea} {
-				    puts $out_eo_ifce   "\"urn:ogf:network:domain=${domain}:node=${nodea}:port=${ifacea}:link=10.0.0${addra}\":\t\"$prefix.$addra\""
+				    puts $out_eo_ifce   "\"urn:ogf:network:domain=${domain}:node=${nodea}:port=${ifacea}:link=10.0.0${addra}\":\t\"$prefix$addra\""
 			    } else {
-				    puts $out_eo_ifce   "\"urn:ogf:network:domain=${domain}:node=${nodeb}:port=${ifaceb}:link=10.0.0${addrb}\":\t\"$prefix.$addrb\""
+				    puts $out_eo_ifce   "\"urn:ogf:network:domain=${domain}:node=${nodeb}:port=${ifaceb}:link=10.0.0${addrb}\":\t\"$prefix$addrb\""
 			    }
 		    }
 	    }
