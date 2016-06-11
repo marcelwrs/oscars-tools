@@ -159,7 +159,7 @@ proc gen_oscars_topo {} {
 		    foreach index $indexes {
 		    	set iface [lindex $clients $index 1]
 		    	set capacity [expr [lindex $clients $index 2]*1000000]
-		    	set mincap [min [expr $capacity/10] 100000000]
+		    	set granularity [min [expr $capacity/10] 100000000]
 		    	set vlans [lindex $clients $index 3]
 		    	set link [lindex $clients $index 4]
 
@@ -167,16 +167,16 @@ proc gen_oscars_topo {} {
 			    puts $out_fd "      <CtrlPlane:port id=\"urn:ogf:network:domain=${domain}:node=${node}:port=${iface}\">"
 			    puts $out_fd "        <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
 			    puts $out_fd "        <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
-			    puts $out_fd "        <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
-			    puts $out_fd "        <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
+			    puts $out_fd "        <CtrlPlane:minimumReservableCapacity>0</CtrlPlane:minimumReservableCapacity>"
+			    puts $out_fd "        <CtrlPlane:granularity>${granularity}</CtrlPlane:granularity>"
 			    puts $out_fd ""
 			    puts $out_fd "        <CtrlPlane:link id=\"urn:ogf:network:domain=${domain}:node=${node}:port=${iface}:link=${link}\">"
 			    puts $out_fd "          <CtrlPlane:remoteLinkId>urn:ogf:network:domain=*:node=*:port=*:link=*</CtrlPlane:remoteLinkId>"
 			    puts $out_fd "          <CtrlPlane:trafficEngineeringMetric>100</CtrlPlane:trafficEngineeringMetric>"
 			    puts $out_fd "          <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
 			    puts $out_fd "          <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
-			    puts $out_fd "          <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
-			    puts $out_fd "          <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
+			    puts $out_fd "          <CtrlPlane:minimumReservableCapacity>0</CtrlPlane:minimumReservableCapacity>"
+			    puts $out_fd "          <CtrlPlane:granularity>${granularity}</CtrlPlane:granularity>"
 			    puts $out_fd "          <CtrlPlane:SwitchingCapabilityDescriptors>"
 			    puts $out_fd "            <CtrlPlane:switchingcapType>l2sc</CtrlPlane:switchingcapType>"
 			    puts $out_fd "            <CtrlPlane:encodingType>ethernet</CtrlPlane:encodingType>"
@@ -202,7 +202,7 @@ proc gen_oscars_topo {} {
 			    set ifacea [lindex $line 4]
 			    set ifaceb [lindex $line 5]
 			    set capacity [expr [lindex $line 6]*1000000]
-			    set mincap [min [expr $capacity/10] 100000000]
+			    set granularity [min [expr $capacity/10] 100000000]
 			    set vlans [lindex $line 7]
 
 			    if {$node == $nodea} {
@@ -210,16 +210,16 @@ proc gen_oscars_topo {} {
 				    puts $out_fd "      <CtrlPlane:port id=\"urn:ogf:network:domain=${domain}:node=${nodea}:port=${ifacea}\">"
 				    puts $out_fd "        <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
 				    puts $out_fd "        <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
-				    puts $out_fd "        <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
-				    puts $out_fd "        <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
+				    puts $out_fd "        <CtrlPlane:minimumReservableCapacity>0</CtrlPlane:minimumReservableCapacity>"
+				    puts $out_fd "        <CtrlPlane:granularity>${granularity}</CtrlPlane:granularity>"
 				    puts $out_fd ""
 				    puts $out_fd "        <CtrlPlane:link id=\"urn:ogf:network:domain=${domain}:node=${nodea}:port=${ifacea}:link=10.0.0${addra}\">"
 				    puts $out_fd "          <CtrlPlane:remoteLinkId>urn:ogf:network:domain=${domain}:node=${nodeb}:port=${ifaceb}:link=10.0.0${addrb}</CtrlPlane:remoteLinkId>"
 				    puts $out_fd "          <CtrlPlane:trafficEngineeringMetric>100</CtrlPlane:trafficEngineeringMetric>"
 				    puts $out_fd "          <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
 				    puts $out_fd "          <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
-				    puts $out_fd "          <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
-				    puts $out_fd "          <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
+				    puts $out_fd "          <CtrlPlane:minimumReservableCapacity>0</CtrlPlane:minimumReservableCapacity>"
+				    puts $out_fd "          <CtrlPlane:granularity>${granularity}</CtrlPlane:granularity>"
 				    puts $out_fd "          <CtrlPlane:SwitchingCapabilityDescriptors>"
 				    puts $out_fd "            <CtrlPlane:switchingcapType>l2sc</CtrlPlane:switchingcapType>"
 				    puts $out_fd "            <CtrlPlane:encodingType>ethernet</CtrlPlane:encodingType>"
@@ -237,16 +237,16 @@ proc gen_oscars_topo {} {
 				    puts $out_fd "      <CtrlPlane:port id=\"urn:ogf:network:domain=${domain}:node=${nodeb}:port=${ifaceb}\">"
 				    puts $out_fd "        <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
 				    puts $out_fd "        <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
-				    puts $out_fd "        <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
-				    puts $out_fd "        <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
+				    puts $out_fd "        <CtrlPlane:minimumReservableCapacity>0</CtrlPlane:minimumReservableCapacity>"
+				    puts $out_fd "        <CtrlPlane:granularity>${granularity}</CtrlPlane:granularity>"
 				    puts $out_fd ""
 				    puts $out_fd "        <CtrlPlane:link id=\"urn:ogf:network:domain=${domain}:node=${nodeb}:port=${ifaceb}:link=10.0.0${addrb}\">"
 				    puts $out_fd "          <CtrlPlane:remoteLinkId>urn:ogf:network:domain=${domain}:node=${nodea}:port=${ifacea}:link=10.0.0${addra}</CtrlPlane:remoteLinkId>"
 				    puts $out_fd "          <CtrlPlane:trafficEngineeringMetric>100</CtrlPlane:trafficEngineeringMetric>"
 				    puts $out_fd "          <CtrlPlane:capacity>${capacity}</CtrlPlane:capacity>"
 				    puts $out_fd "          <CtrlPlane:maximumReservableCapacity>${capacity}</CtrlPlane:maximumReservableCapacity>"
-				    puts $out_fd "          <CtrlPlane:minimumReservableCapacity>${mincap}</CtrlPlane:minimumReservableCapacity>"
-				    puts $out_fd "          <CtrlPlane:granularity>${mincap}</CtrlPlane:granularity>"
+				    puts $out_fd "          <CtrlPlane:minimumReservableCapacity>0</CtrlPlane:minimumReservableCapacity>"
+				    puts $out_fd "          <CtrlPlane:granularity>${granularity}</CtrlPlane:granularity>"
 				    puts $out_fd "          <CtrlPlane:SwitchingCapabilityDescriptors>"
 				    puts $out_fd "            <CtrlPlane:switchingcapType>l2sc</CtrlPlane:switchingcapType>"
 				    puts $out_fd "            <CtrlPlane:encodingType>ethernet</CtrlPlane:encodingType>"
